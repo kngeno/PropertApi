@@ -35,34 +35,6 @@ The architecture consists of:
    - Caching with **Azure Redis** for hot endpoints.  
    - Automated infrastructure with **Bicep templates**.
 
-**Diagram**: see [High-Level Architecture]
-
-   ┌──────────┐     ┌────────────────────────┐      ┌──────────────────┐
-   │ Data     │     │ Azure Data Factory     │      │ Azure Data Lake  │
-   │ Sources  │─▶──▶│ (Ingest & Orchestrate) │─▶───▶│ Storage Gen2     │
-   │ (XML,    │     └────────────────────────┘      └──────────────────┘
-   │ JSON,    │                                         │
-   │ CSV,     │                                         │
-   │ Excel,   │                                         ▼
-   │ SQL DB)  │                                 ┌──────────────────┐
-   └──────────┘                                 │ Azure Synapse    │
-                                                │ Analytics / SQL  │
-                                                │ Data Warehouse   │
-                                                └──────────────────┘
-                                                         │
-                                                         ▼
-                                                ┌──────────────────┐
-                                                │ ASP.NET Core     │
-                                                │ REST API         │
-                                                └──────────────────┘
-                                                         │
-                                                         ▼
-                                                ┌──────────────────┐
-                                                │ Clients & BI     │
-                                                └──────────────────┘
-
-Datasets (XML, CSV, JSON, XLSX, SQL)
-
 ---
 
 ## Datasets
