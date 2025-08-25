@@ -1,0 +1,76 @@
+{
+	"name": "people_dataflow",
+	"properties": {
+		"description": "Clean People XML to Parquet",
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "PeopleXML",
+						"type": "DatasetReference"
+					},
+					"name": "peopleSource"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "PeoplePq",
+						"type": "DatasetReference"
+					},
+					"name": "peopleSink"
+				}
+			],
+			"transformations": [
+				{
+					"name": "derivedColumns"
+				},
+				{
+					"name": "assertPersonID"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          person_id as string,",
+				"          full_name as string,",
+				"          national_id as string,",
+				"          dob as string,",
+				"          role as string,",
+				"          associated_company as string,",
+				"          associated_parcels as string,",
+				"          contact_email as string,",
+				"          watchlist_status as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false,",
+				"     validationMode: 'none',",
+				"     namespaces: true) ~> peopleSource",
+				"peopleSource derive(dob = toTimestamp(dob,'yyyy-MM-dd'),",
+				"          role = upper(trim(role)),",
+				"          watchlist_status = upper(trim(watchlist_status)),",
+				"          full_name = trim(full_name),",
+				"          contact_email = lower(trim(contact_email))) ~> derivedColumns",
+				"derivedColumns assert(expectTrue(!isNull(person_id), false, 'assertPersonID')) ~> assertPersonID",
+				"assertPersonID sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          person_id as string,",
+				"          full_name as string,",
+				"          national_id as string,",
+				"          dob as date,",
+				"          role as string,",
+				"          associated_company as string,",
+				"          associated_parcels as string,",
+				"          contact_email as string,",
+				"          watchlist_status as string",
+				"     ),",
+				"     format: 'parquet',",
+				"     umask: 0022,",
+				"     preCommands: [],",
+				"     postCommands: []) ~> peopleSink"
+			]
+		}
+	}
+}

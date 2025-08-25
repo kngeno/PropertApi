@@ -1,0 +1,21 @@
+{
+	"name": "PeopleXML",
+	"properties": {
+		"description": "PeopleXML",
+		"linkedServiceName": {
+			"referenceName": "EEIADF",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "Xml",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileName": "people.xml",
+				"folderPath": "xml",
+				"fileSystem": "raw"
+			}
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

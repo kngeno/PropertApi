@@ -1,0 +1,21 @@
+{
+	"name": "ZoningBinary",
+	"properties": {
+		"description": "ZoningBinary",
+		"linkedServiceName": {
+			"referenceName": "EEIADF",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "Binary",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileName": "zoning_ext.sql",
+				"folderPath": "sql",
+				"fileSystem": "raw"
+			}
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

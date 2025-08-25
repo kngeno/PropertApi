@@ -1,0 +1,78 @@
+{
+	"name": "ds_clean_parcels_parquet",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "EEIADF",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "clean"
+		},
+		"annotations": [],
+		"type": "Parquet",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileName": "ds_clean_parcels_parquet.parquet",
+				"folderPath": "parcels",
+				"fileSystem": "clean"
+			},
+			"compressionCodec": "snappy"
+		},
+		"schema": [
+			{
+				"name": "parcel_id",
+				"type": "UTF8"
+			},
+			{
+				"name": "owner_id",
+				"type": "UTF8"
+			},
+			{
+				"name": "owner_name",
+				"type": "UTF8"
+			},
+			{
+				"name": "area_name",
+				"type": "UTF8"
+			},
+			{
+				"name": "zoning_code",
+				"type": "UTF8"
+			},
+			{
+				"name": "cadastral_code",
+				"type": "UTF8"
+			},
+			{
+				"name": "intended_use",
+				"type": "UTF8"
+			},
+			{
+				"name": "regulatory_status",
+				"type": "UTF8"
+			},
+			{
+				"name": "land_use",
+				"type": "UTF8"
+			},
+			{
+				"name": "area_sq_m",
+				"type": "DOUBLE"
+			},
+			{
+				"name": "centroid_lon",
+				"type": "DOUBLE"
+			},
+			{
+				"name": "centroid_lat",
+				"type": "DOUBLE"
+			},
+			{
+				"name": "last_transaction_date",
+				"type": "DATE"
+			}
+		]
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

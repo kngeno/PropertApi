@@ -1,0 +1,66 @@
+{
+	"name": "ds_clean_zoning_parquet",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "EEIADF",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "clean"
+		},
+		"annotations": [],
+		"type": "Parquet",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileName": "ds_clean_zoning_parquet.parquet",
+				"folderPath": "zones",
+				"fileSystem": "clean"
+			},
+			"compressionCodec": "snappy"
+		},
+		"schema": [
+			{
+				"name": "zone_id",
+				"type": "UTF8"
+			},
+			{
+				"name": "zoning_code",
+				"type": "UTF8"
+			},
+			{
+				"name": "regulatory_body",
+				"type": "UTF8"
+			},
+			{
+				"name": "approval_status",
+				"type": "UTF8"
+			},
+			{
+				"name": "valid_until",
+				"type": "DATE"
+			},
+			{
+				"name": "restrictions",
+				"type": "UTF8"
+			},
+			{
+				"name": "description",
+				"type": "UTF8"
+			},
+			{
+				"name": "max_height_m",
+				"type": "DOUBLE"
+			},
+			{
+				"name": "far",
+				"type": "DOUBLE"
+			},
+			{
+				"name": "allowed_uses",
+				"type": "UTF8"
+			}
+		]
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

@@ -1,0 +1,77 @@
+{
+	"name": "parcels_dataflow",
+	"properties": {
+		"description": "Clean and write parcels data",
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "ParcelsJSON",
+						"type": "DatasetReference"
+					},
+					"name": "parcelsSource"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "ParcelsPq",
+						"type": "DatasetReference"
+					},
+					"name": "parcelsSink"
+				}
+			],
+			"transformations": [
+				{
+					"name": "deriveColumns"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          parcel_id as string,",
+				"          owner_id as string,",
+				"          owner_name as string,",
+				"          area_name as string,",
+				"          zoning_code as string,",
+				"          cadastral_code as string,",
+				"          intended_use as string,",
+				"          regulatory_status as string,",
+				"          land_use as string,",
+				"          area_sq_m as double,",
+				"          centroid_lon as double,",
+				"          centroid_lat as double,",
+				"          last_transaction_date as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false,",
+				"     documentForm: 'arrayOfDocuments') ~> parcelsSource",
+				"parcelsSource derive(last_transaction_date = toTimestamp(last_transaction_date,'yyyy-MM-dd')) ~> deriveColumns",
+				"deriveColumns sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          parcel_id as string,",
+				"          owner_id as string,",
+				"          owner_name as string,",
+				"          area_name as string,",
+				"          zoning_code as string,",
+				"          cadastral_code as string,",
+				"          intended_use as string,",
+				"          regulatory_status as string,",
+				"          land_use as string,",
+				"          area_sq_m as double,",
+				"          centroid_lon as double,",
+				"          centroid_lat as double,",
+				"          last_transaction_date as date",
+				"     ),",
+				"     format: 'parquet',",
+				"     umask: 0022,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> parcelsSink"
+			]
+		}
+	}
+}

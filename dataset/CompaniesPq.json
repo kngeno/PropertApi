@@ -1,0 +1,58 @@
+{
+	"name": "CompaniesPq",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "EEIADF",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "Parquet",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"folderPath": "companies",
+				"fileSystem": "clean"
+			},
+			"compressionCodec": "snappy"
+		},
+		"schema": [
+			{
+				"name": "company_id",
+				"type": "UTF8"
+			},
+			{
+				"name": "company_name",
+				"type": "UTF8"
+			},
+			{
+				"name": "registration_number",
+				"type": "UTF8"
+			},
+			{
+				"name": "industry",
+				"type": "UTF8"
+			},
+			{
+				"name": "address",
+				"type": "UTF8"
+			},
+			{
+				"name": "board_members",
+				"type": "UTF8"
+			},
+			{
+				"name": "ownership_share",
+				"type": "UTF8"
+			},
+			{
+				"name": "status",
+				"type": "UTF8"
+			},
+			{
+				"name": "last_updated",
+				"type": "DATE"
+			}
+		]
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

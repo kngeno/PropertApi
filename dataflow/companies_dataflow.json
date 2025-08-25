@@ -1,0 +1,84 @@
+{
+	"name": "companies_dataflow",
+	"properties": {
+		"description": "companies_dataflow",
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "CompaniesXLSX",
+						"type": "DatasetReference"
+					},
+					"name": "companiesSource"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "CompaniesPq",
+						"type": "DatasetReference"
+					},
+					"name": "companiesSink",
+					"rejectedDataLinkedService": {
+						"referenceName": "EEIADF",
+						"type": "LinkedServiceReference"
+					}
+				}
+			],
+			"transformations": [
+				{
+					"name": "companiesFilterStatus"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          company_id as string,",
+				"          company_name as string,",
+				"          registration_number as string,",
+				"          industry as string,",
+				"          address as string,",
+				"          board_members as string,",
+				"          ownership_share as string,",
+				"          status as string,",
+				"          last_updated as date 'yyyy-MM-dd'",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> companiesSource",
+				"companiesSource filter(status == 'Active') ~> companiesFilterStatus",
+				"companiesFilterStatus sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          company_id as string,",
+				"          company_name as string,",
+				"          registration_number as string,",
+				"          industry as string,",
+				"          address as string,",
+				"          board_members as string,",
+				"          ownership_share as string,",
+				"          status as string,",
+				"          last_updated as date",
+				"     ),",
+				"     format: 'parquet',",
+				"     truncate: true,",
+				"     umask: 0766,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     mapColumn(",
+				"          company_id,",
+				"          company_name,",
+				"          registration_number,",
+				"          industry,",
+				"          address,",
+				"          board_members,",
+				"          ownership_share,",
+				"          status,",
+				"          last_updated",
+				"     )) ~> companiesSink"
+			]
+		}
+	}
+}

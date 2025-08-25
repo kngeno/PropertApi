@@ -1,0 +1,64 @@
+{
+	"name": "ParcelsJSON",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "EEIADF",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "Json",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileName": "parcels_ext.json",
+				"folderPath": "json",
+				"fileSystem": "raw"
+			}
+		},
+		"schema": {
+			"type": "object",
+			"properties": {
+				"parcel_id": {
+					"type": "string"
+				},
+				"owner_id": {
+					"type": "string"
+				},
+				"owner_name": {
+					"type": "string"
+				},
+				"area_name": {
+					"type": "string"
+				},
+				"zoning_code": {
+					"type": "string"
+				},
+				"cadastral_code": {
+					"type": "string"
+				},
+				"intended_use": {
+					"type": "string"
+				},
+				"regulatory_status": {
+					"type": "string"
+				},
+				"land_use": {
+					"type": "string"
+				},
+				"area_sq_m": {
+					"type": "number"
+				},
+				"centroid_lon": {
+					"type": "number"
+				},
+				"centroid_lat": {
+					"type": "number"
+				},
+				"last_transaction_date": {
+					"type": "string"
+				}
+			}
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

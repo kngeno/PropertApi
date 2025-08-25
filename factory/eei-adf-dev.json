@@ -1,0 +1,9 @@
+{
+	"name": "eei-adf-dev",
+	"location": "northeurope",
+	"identity": {
+		"type": "SystemAssigned",
+		"principalId": "92100b84-cbf1-4708-9ab5-e38407ac417e",
+		"tenantId": "24b4b4bd-8e92-46ab-96da-5f419d644a12"
+	}
+}

@@ -1,0 +1,76 @@
+{
+	"name": "buildings_dataflow",
+	"properties": {
+		"description": "Clean Buildings CSV to Parquet",
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "BuildingsCSV",
+						"type": "DatasetReference"
+					},
+					"name": "buildingsSource"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "BuildingsPq",
+						"type": "DatasetReference"
+					},
+					"name": "buildingsSink"
+				}
+			],
+			"transformations": [
+				{
+					"name": "derivedColumns"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          building_id as string,",
+				"          parcel_id as string,",
+				"          use_type as string,",
+				"          year_built as string,",
+				"          floors as string,",
+				"          height_m as string,",
+				"          construction_status as string,",
+				"          permit_number as string,",
+				"          regulatory_status as string,",
+				"          valuation_amount as string,",
+				"          owner_name as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> buildingsSource",
+				"buildingsSource derive(year_built = toInteger(year_built),",
+				"          floors = toInteger(floors),",
+				"          height_m = toDouble(height_m),",
+				"          valuation_amount = toDecimal(valuation_amount,18,2),",
+				"          construction_status = upper(trim(construction_status)),",
+				"          regulatory_status = upper(trim(regulatory_status)),",
+				"          use_type = upper(trim(use_type))) ~> derivedColumns",
+				"derivedColumns sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          building_id as string,",
+				"          parcel_id as string,",
+				"          use_type as string,",
+				"          year_built as double,",
+				"          floors as double,",
+				"          height_m as double,",
+				"          construction_status as string,",
+				"          permit_number as string,",
+				"          regulatory_status as string,",
+				"          valuation_amount as double,",
+				"          owner_name as string",
+				"     ),",
+				"     format: 'parquet',",
+				"     umask: 0022,",
+				"     preCommands: [],",
+				"     postCommands: []) ~> buildingsSink"
+			]
+		}
+	}
+}

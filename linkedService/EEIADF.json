@@ -1,0 +1,12 @@
+{
+	"name": "EEIADF",
+	"type": "Microsoft.DataFactory/factories/linkedservices",
+	"properties": {
+		"description": "Data Storage",
+		"annotations": [],
+		"type": "AzureBlobFS",
+		"typeProperties": {
+			"url": "https://eeistorage1.dfs.core.windows.net/"
+		}
+	}
+}

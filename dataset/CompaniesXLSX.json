@@ -1,0 +1,61 @@
+{
+	"name": "CompaniesXLSX",
+	"properties": {
+		"description": "CompaniesXLSX",
+		"linkedServiceName": {
+			"referenceName": "EEIADF",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "Excel",
+		"typeProperties": {
+			"sheetName": "Companies",
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileName": "companies.xlsx",
+				"folderPath": "xlsx",
+				"fileSystem": "raw"
+			},
+			"firstRowAsHeader": true
+		},
+		"schema": [
+			{
+				"name": "Prop_0",
+				"type": "String"
+			},
+			{
+				"name": "Prop_1",
+				"type": "String"
+			},
+			{
+				"name": "Prop_2",
+				"type": "String"
+			},
+			{
+				"name": "Prop_3",
+				"type": "String"
+			},
+			{
+				"name": "Prop_4",
+				"type": "String"
+			},
+			{
+				"name": "Prop_5",
+				"type": "String"
+			},
+			{
+				"name": "Prop_6",
+				"type": "String"
+			},
+			{
+				"name": "Prop_7",
+				"type": "String"
+			},
+			{
+				"name": "Prop_8",
+				"type": "String"
+			}
+		]
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

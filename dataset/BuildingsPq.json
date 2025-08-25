@@ -1,0 +1,66 @@
+{
+	"name": "BuildingsPq",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "EEIADF",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "Parquet",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"folderPath": "buildings",
+				"fileSystem": "clean"
+			},
+			"compressionCodec": "snappy"
+		},
+		"schema": [
+			{
+				"name": "building_id",
+				"type": "UTF8"
+			},
+			{
+				"name": "parcel_id",
+				"type": "UTF8"
+			},
+			{
+				"name": "use_type",
+				"type": "UTF8"
+			},
+			{
+				"name": "year_built",
+				"type": "DOUBLE"
+			},
+			{
+				"name": "floors",
+				"type": "DOUBLE"
+			},
+			{
+				"name": "height_m",
+				"type": "DOUBLE"
+			},
+			{
+				"name": "construction_status",
+				"type": "UTF8"
+			},
+			{
+				"name": "permit_number",
+				"type": "UTF8"
+			},
+			{
+				"name": "regulatory_status",
+				"type": "UTF8"
+			},
+			{
+				"name": "valuation_amount",
+				"type": "DOUBLE"
+			},
+			{
+				"name": "owner_name",
+				"type": "UTF8"
+			}
+		]
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

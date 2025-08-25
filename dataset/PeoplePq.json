@@ -1,0 +1,58 @@
+{
+	"name": "PeoplePq",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "EEIADF",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "Parquet",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"folderPath": "people",
+				"fileSystem": "clean"
+			},
+			"compressionCodec": "snappy"
+		},
+		"schema": [
+			{
+				"name": "person_id",
+				"type": "UTF8"
+			},
+			{
+				"name": "full_name",
+				"type": "UTF8"
+			},
+			{
+				"name": "national_id",
+				"type": "UTF8"
+			},
+			{
+				"name": "dob",
+				"type": "DATE"
+			},
+			{
+				"name": "role",
+				"type": "UTF8"
+			},
+			{
+				"name": "associated_company",
+				"type": "UTF8"
+			},
+			{
+				"name": "associated_parcels",
+				"type": "UTF8"
+			},
+			{
+				"name": "contact_email",
+				"type": "UTF8"
+			},
+			{
+				"name": "watchlist_status",
+				"type": "UTF8"
+			}
+		]
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

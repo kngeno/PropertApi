@@ -1,0 +1,50 @@
+{
+	"name": "pl_clean_and_enrich",
+	"properties": {
+		"description": "pl_clean_and_enrich datasets",
+		"activities": [
+			{
+				"name": "CompaniesDataFlowPipeline",
+				"description": "CompaniesDataFlowPipeline",
+				"type": "ExecuteDataFlow",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"dataflow": {
+						"referenceName": "companies_dataflow",
+						"type": "DataFlowReference"
+					},
+					"compute": {
+						"coreCount": 8,
+						"computeType": "General"
+					},
+					"traceLevel": "Fine"
+				}
+			}
+		],
+		"parameters": {
+			"pCleanRoot": {
+				"type": "string",
+				"defaultValue": "clean"
+			},
+			"pCuratedRoot": {
+				"type": "string",
+				"defaultValue": "curated"
+			},
+			"pIngestDate": {
+				"type": "string",
+				"defaultValue": "@formatDateTime(utcNow(),'yyyy/MM/dd')"
+			}
+		},
+		"annotations": [],
+		"lastPublishTime": "2025-08-25T01:00:23Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}
