@@ -115,5 +115,5 @@ Once running, open in browser:
 
 Swagger UI → https://localhost:7139/swagger
 
-API health check → GET /weatherforecast (default)
+API health check → GET /api/health (default)
 
