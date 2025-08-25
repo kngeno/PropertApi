@@ -1,0 +1,17 @@
+{
+	"name": "InsertTable_FactProperty",
+	"properties": {
+		"content": {
+			"query": "INSERT INTO [dbo].[FactProperty]\n    (ParcelKey, BuildingKey, ZoningKey, CompanyKey, PersonKey,\n     ValuationAmount, AreaSqM, Floors, HeightM,\n     LastTransactionDate, YearBuilt, LoadDate)\nSELECT\n    dp.ParcelKey,\n    db.BuildingKey,\n    dz.ZoningKey,\n    dc.CompanyKey,\n    dpe.PersonKey,\n    sb.valuation_amount,\n    sp.area_sq_m,\n    sb.floors,\n    sb.height_m,\n    sp.last_transaction_date,\n    sb.year_built,\n    SYSDATETIME() AS LoadDate\nFROM [dbo].[stg_Parcels] sp\nLEFT JOIN [dbo].[DimParcel] dp \n    ON dp.CadastralCode = sp.cadastral_code\nLEFT JOIN [dbo].[stg_Buildings] sb\n    ON sb.parcel_id = sp.parcel_id\nLEFT JOIN [dbo].[DimBuilding] db\n    ON db.PermitNumber = sb.permit_number\nLEFT JOIN [dbo].[stg_Zoning] sz\n    ON sz.zoning_code = sp.zoning_code\nLEFT JOIN [dbo].[DimZoning] dz\n    ON dz.ZoningCode = sz.zoning_code\nLEFT JOIN [dbo].[stg_Companies] sc\n    ON sc.company_id = sp.owner_id\nLEFT JOIN [dbo].[DimCompany] dc\n    ON dc.CompanyName = sc.company_name\nLEFT JOIN [dbo].[stg_People] sppl\n    ON sppl.person_id = sp.owner_id\nLEFT JOIN [dbo].[DimPerson] dpe\n    ON dpe.FullName = sppl.full_name;\n",
+			"metadata": {
+				"language": "sql"
+			},
+			"currentConnection": {
+				"databaseName": "eei_sqlpool",
+				"poolName": "eei_sqlpool"
+			},
+			"resultLimit": 5000
+		},
+		"type": "SqlQuery"
+	}
+}

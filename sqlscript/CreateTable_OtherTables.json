@@ -1,0 +1,18 @@
+{
+	"name": "CreateTable_OtherTables",
+	"properties": {
+		"description": "CreateTable_OtherTables",
+		"content": {
+			"query": "CREATE TABLE [dbo].[stg_Zoning]\n(\n    zone_id NVARCHAR(16) NOT NULL,\n    zoning_code NVARCHAR(10) NULL,\n    description NVARCHAR(128) NULL,\n    max_height_m INT NULL,\n    far FLOAT NULL,\n    allowed_uses NVARCHAR(256) NULL\n)\nWITH\n(\n    DISTRIBUTION = ROUND_ROBIN,\n    CLUSTERED COLUMNSTORE INDEX\n)\nGO\n\nCREATE TABLE [dbo].[stg_Companies]\n(\n    company_id NVARCHAR(64) NOT NULL,\n    company_name NVARCHAR(200) NULL,\n    registration_number NVARCHAR(50) NULL,\n    industry NVARCHAR(50) NULL,\n    address NVARCHAR(256) NULL,\n    board_members NVARCHAR(1024) NULL,\n    ownership_share NVARCHAR(256) NULL,\n    status NVARCHAR(50) NULL,\n    last_updated DATETIME2(3) NULL\n)\nWITH\n(\n    DISTRIBUTION = ROUND_ROBIN,\n    CLUSTERED COLUMNSTORE INDEX\n)\nGO\n\nCREATE TABLE [dbo].[stg_People]\n(\n    person_id NVARCHAR(64) NOT NULL,\n    full_name NVARCHAR(200) NULL,\n    national_id NVARCHAR(64) NULL,\n    dob DATE NULL,\n    role NVARCHAR(50) NULL,\n    associated_company NVARCHAR(64) NULL,\n    associated_parcels NVARCHAR(1024) NULL,\n    contact_email NVARCHAR(256) NULL,\n    watchlist_status NVARCHAR(50) NULL\n)\nWITH\n(\n    DISTRIBUTION = ROUND_ROBIN,\n    CLUSTERED COLUMNSTORE INDEX\n)\nGO\n\n-- Optional curated join landing\nCREATE TABLE [dbo].[stg_Property]\n(\n    parcel_id NVARCHAR(64) NOT NULL,\n    building_id NVARCHAR(64) NULL,\n    zoning_code NVARCHAR(50) NULL,\n    company_id NVARCHAR(64) NULL,\n    person_id NVARCHAR(64) NULL,\n    last_transaction_date DATETIME2(3) NULL,\n    valuation_amount DECIMAL(18,2) NULL,\n    area_sq_m DECIMAL(18,2) NULL,\n    currency_code CHAR(3) NULL\n)\nWITH\n(\n    DISTRIBUTION = ROUND_ROBIN,\n    CLUSTERED COLUMNSTORE INDEX\n)\nGO",
+			"metadata": {
+				"language": "sql"
+			},
+			"currentConnection": {
+				"databaseName": "eei_sqlpool",
+				"poolName": "eei_sqlpool"
+			},
+			"resultLimit": 5000
+		},
+		"type": "SqlQuery"
+	}
+}

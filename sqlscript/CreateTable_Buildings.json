@@ -1,0 +1,18 @@
+{
+	"name": "CreateTable_Buildings",
+	"properties": {
+		"description": "CreateTable_Buildings",
+		"content": {
+			"query": "CREATE TABLE [dbo].[stg_Buildings]\n(\n    building_id NVARCHAR(64) NOT NULL,\n    parcel_id NVARCHAR(64) NULL,\n    use_type NVARCHAR(50) NULL,\n    year_built INT NULL,\n    floors INT NULL,\n    height_m FLOAT NULL,\n    construction_status NVARCHAR(50) NULL,\n    permit_number NVARCHAR(64) NULL,\n    regulatory_status NVARCHAR(50) NULL,\n    valuation_amount DECIMAL(18,2) NULL,\n    owner_name NVARCHAR(200) NULL\n)\nWITH\n(\n    DISTRIBUTION = ROUND_ROBIN,\n    CLUSTERED COLUMNSTORE INDEX\n)\nGO",
+			"metadata": {
+				"language": "sql"
+			},
+			"currentConnection": {
+				"databaseName": "eei_sqlpool",
+				"poolName": "eei_sqlpool"
+			},
+			"resultLimit": 5000
+		},
+		"type": "SqlQuery"
+	}
+}

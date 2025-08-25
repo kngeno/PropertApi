@@ -1,0 +1,17 @@
+{
+	"name": "COPY_ParcelsPq",
+	"properties": {
+		"content": {
+			"query": "COPY INTO [dbo].[stg_Parcels_Raw]\nFROM 'https://eeistorage1.dfs.core.windows.net/clean/parcels/'\nWITH\n(\n    FILE_TYPE = 'PARQUET',\n    CREDENTIAL = (IDENTITY= 'Managed Identity')\n);\nGO",
+			"metadata": {
+				"language": "sql"
+			},
+			"currentConnection": {
+				"databaseName": "eei_sqlpool",
+				"poolName": "eei_sqlpool"
+			},
+			"resultLimit": 5000
+		},
+		"type": "SqlQuery"
+	}
+}

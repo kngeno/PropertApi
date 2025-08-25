@@ -1,0 +1,17 @@
+{
+	"name": "CreateTable_IngestionWatermark",
+	"properties": {
+		"content": {
+			"query": "CREATE TABLE [dbo].[IngestionWatermark]\n(\n    SourceName   NVARCHAR(100) NOT NULL,\n    FileName     NVARCHAR(500) NOT NULL,\n    LastModified DATETIME2 NULL,\n    LoadDate     DATETIME2 NULL,\n    CONSTRAINT PK_IngestionWatermark \n        PRIMARY KEY NONCLUSTERED (SourceName, FileName) NOT ENFORCED\n)\nWITH\n(\n    DISTRIBUTION = HASH(SourceName),\n    CLUSTERED COLUMNSTORE INDEX\n);\nGO\n",
+			"metadata": {
+				"language": "sql"
+			},
+			"currentConnection": {
+				"databaseName": "eei_sqlpool",
+				"poolName": "eei_sqlpool"
+			},
+			"resultLimit": 5000
+		},
+		"type": "SqlQuery"
+	}
+}

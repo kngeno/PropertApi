@@ -1,0 +1,18 @@
+{
+	"name": "CreateTable_DimTables",
+	"properties": {
+		"description": "CreateTable_DimTables",
+		"content": {
+			"query": "CREATE TABLE [dbo].[DimParcel]\n(\n    ParcelKey INT IDENTITY(1,1) NOT NULL,\n    CadastralCode NVARCHAR(50) NOT NULL,\n    ParcelId NVARCHAR(64) NULL,\n    AreaName NVARCHAR(200) NULL,\n    ZoningCode NVARCHAR(50) NULL,\n    IntendedUse NVARCHAR(50) NULL,\n    RegulatoryStatus NVARCHAR(50) NULL,\n    LandUse NVARCHAR(50) NULL,\n    AreaSqM DECIMAL(18,2) NULL,\n    CentroidLon FLOAT NULL,\n    CentroidLat FLOAT NULL,\n    CONSTRAINT PK_DimParcel PRIMARY KEY NONCLUSTERED (ParcelKey) NOT ENFORCED\n)\nWITH\n(\n    DISTRIBUTION = REPLICATE,\n    CLUSTERED COLUMNSTORE INDEX\n)\nGO\n\nCREATE TABLE [dbo].[DimBuilding]\n(\n    BuildingKey INT IDENTITY(1,1) NOT NULL,\n    BuildingId NVARCHAR(64) NOT NULL,\n    PermitNumber NVARCHAR(64) NULL,\n    UseType NVARCHAR(50) NULL,\n    YearBuilt INT NULL,\n    Floors INT NULL,\n    HeightM FLOAT NULL,\n    ConstructionStatus NVARCHAR(50) NULL,\n    RegulatoryStatus NVARCHAR(50) NULL,\n    CONSTRAINT PK_DimBuilding PRIMARY KEY NONCLUSTERED (BuildingKey) NOT ENFORCED\n)\nWITH\n(\n    DISTRIBUTION = REPLICATE,\n    CLUSTERED COLUMNSTORE INDEX\n)\nGO\n\nCREATE TABLE [dbo].[DimZoning]\n(\n    ZoningKey INT IDENTITY(1,1) NOT NULL,\n    ZoningCode NVARCHAR(50) NOT NULL,\n    Description NVARCHAR(128) NULL,\n    MaxHeightM INT NULL,\n    FAR FLOAT NULL,\n    AllowedUses NVARCHAR(256) NULL,\n    CONSTRAINT PK_DimZoning PRIMARY KEY NONCLUSTERED (ZoningKey) NOT ENFORCED\n)\nWITH\n(\n    DISTRIBUTION = REPLICATE,\n    CLUSTERED COLUMNSTORE INDEX\n)\nGO\n\nCREATE TABLE [dbo].[DimCompany]\n(\n    CompanyKey INT IDENTITY(1,1) NOT NULL,\n    CompanyId NVARCHAR(64) NOT NULL,\n    CompanyName NVARCHAR(200) NULL,\n    RegistrationNumber NVARCHAR(50) NULL,\n    Industry NVARCHAR(50) NULL,\n    Address NVARCHAR(256) NULL,\n    Status NVARCHAR(50) NULL,\n    CONSTRAINT PK_DimCompany PRIMARY KEY NONCLUSTERED (CompanyKey) NOT ENFORCED\n)\nWITH\n(\n    DISTRIBUTION = REPLICATE,\n    CLUSTERED COLUMNSTORE INDEX\n)\nGO\n\nCREATE TABLE [dbo].[DimPerson]\n(\n    PersonKey INT IDENTITY(1,1) NOT NULL,\n    PersonId NVARCHAR(64) NOT NULL,\n    FullName NVARCHAR(200) NULL,\n    NationalId NVARCHAR(64) NULL,\n    Role NVARCHAR(50) NULL,\n    ContactEmail NVARCHAR(256) NULL,\n    WatchlistStatus NVARCHAR(50) NULL,\n    CONSTRAINT PK_DimPerson PRIMARY KEY NONCLUSTERED (PersonKey) NOT ENFORCED\n)\nWITH\n(\n    DISTRIBUTION = REPLICATE,\n    CLUSTERED COLUMNSTORE INDEX\n)\nGO",
+			"metadata": {
+				"language": "sql"
+			},
+			"currentConnection": {
+				"databaseName": "eei_sqlpool",
+				"poolName": "eei_sqlpool"
+			},
+			"resultLimit": 5000
+		},
+		"type": "SqlQuery"
+	}
+}

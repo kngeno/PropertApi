@@ -1,0 +1,17 @@
+{
+	"name": "Create_MasterKey",
+	"properties": {
+		"content": {
+			"query": "-- Step 1: Create a database master key (only once per DB)\nCREATE MASTER KEY ENCRYPTION BY PASSWORD = 'StrongP@ssw0rd!';\nGO\n\n-- Step 2: Create a credential using Managed Identity\nCREATE DATABASE SCOPED CREDENTIAL [ADLS_MI]\nWITH IDENTITY = 'Managed Identity';\nGO",
+			"metadata": {
+				"language": "sql"
+			},
+			"currentConnection": {
+				"databaseName": "eei_sqlpool",
+				"poolName": "eei_sqlpool"
+			},
+			"resultLimit": 5000
+		},
+		"type": "SqlQuery"
+	}
+}

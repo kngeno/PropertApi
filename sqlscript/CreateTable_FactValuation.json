@@ -1,0 +1,18 @@
+{
+	"name": "CreateTable_FactValuation",
+	"properties": {
+		"description": "CreateTable_FactValuation",
+		"content": {
+			"query": "CREATE TABLE [dbo].[FactValuation]\n(\n    FactValuationKey BIGINT IDENTITY(1,1) NOT NULL,\n    ParcelKey INT NULL,\n    BuildingKey INT NULL,\n    PersonKey INT NULL,\n    CompanyKey INT NULL,\n    ValuationAmount DECIMAL(18,2) NULL,\n    OwnershipShare DECIMAL(5,2) NULL,\n    LastTransactionDate DATE NULL,\n    CONSTRAINT PK_FactValuation PRIMARY KEY NONCLUSTERED (FactValuationKey) NOT ENFORCED\n)\nWITH\n(\n    DISTRIBUTION = HASH(ParcelKey),\n    CLUSTERED COLUMNSTORE INDEX\n)\nGO",
+			"metadata": {
+				"language": "sql"
+			},
+			"currentConnection": {
+				"databaseName": "eei_sqlpool",
+				"poolName": "eei_sqlpool"
+			},
+			"resultLimit": 5000
+		},
+		"type": "SqlQuery"
+	}
+}

@@ -1,0 +1,18 @@
+{
+	"name": "CreateTable_Parcel",
+	"properties": {
+		"description": "CreateTable_Parcel",
+		"content": {
+			"query": "CREATE TABLE [dbo].[stg_Parcels]\n(\n    parcel_id NVARCHAR(64) NOT NULL,\n    owner_id NVARCHAR(64) NULL,\n    owner_name NVARCHAR(200) NULL,\n    area_name NVARCHAR(200) NULL,\n    zoning_code NVARCHAR(50) NULL,\n    cadastral_code NVARCHAR(50) NOT NULL,\n    intended_use NVARCHAR(50) NULL,\n    regulatory_status NVARCHAR(50) NULL,\n    land_use NVARCHAR(50) NULL,\n    area_sq_m DECIMAL(18,2) NULL,\n    centroid_lon FLOAT NULL,\n    centroid_lat FLOAT NULL,\n    last_transaction_date DATETIME2(3) NULL\n)\nWITH\n(\n    DISTRIBUTION = ROUND_ROBIN,\n    CLUSTERED COLUMNSTORE INDEX\n)\nGO",
+			"metadata": {
+				"language": "sql"
+			},
+			"currentConnection": {
+				"databaseName": "eei_sqlpool",
+				"poolName": "eei_sqlpool"
+			},
+			"resultLimit": 5000
+		},
+		"type": "SqlQuery"
+	}
+}

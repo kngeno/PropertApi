@@ -1,0 +1,17 @@
+{
+	"name": "CreateUser_Owner",
+	"properties": {
+		"content": {
+			"query": "CREATE LOGIN eei_admin WITH PASSWORD = 'Str0ngP@ssw0rd!';\nGO\n\n-- Step 2: Switch context to your dedicated SQL pool database\n-- (IMPORTANT: You must change database in SSMS or Synapse Studio manually,\n-- the \"USE <db>\" command is supported only if the pool is online.)\n-- Pick database: eei_sqlpool\n\n-- Step 3: Create a user mapped to the login\nCREATE USER eei_admin FOR LOGIN eei_admin;\nGO\n\n-- Step 4: Grant db_owner role\nEXEC sp_addrolemember 'db_owner', 'eei_admin';\nGO",
+			"metadata": {
+				"language": "sql"
+			},
+			"currentConnection": {
+				"databaseName": "master",
+				"poolName": "eei_sqlpool"
+			},
+			"resultLimit": 5000
+		},
+		"type": "SqlQuery"
+	}
+}
