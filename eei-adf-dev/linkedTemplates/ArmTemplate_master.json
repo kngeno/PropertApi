@@ -1,0 +1,112 @@
+{
+	"$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"type": "string",
+			"metadata": "Data Factory name",
+			"defaultValue": "eei-adf-dev"
+		},
+		"EEISQL_password": {
+			"type": "secureString",
+			"metadata": "Secure string for 'password' of 'EEISQL'"
+		},
+		"eei-synapse-dev-WorkspaceDefaultSqlServer_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'eei-synapse-dev-WorkspaceDefaultSqlServer'",
+			"defaultValue": "Integrated Security=False;Encrypt=True;Connection Timeout=30;Data Source=tcp:eei-synapse-dev.sql.azuresynapse.net,1433;Initial Catalog=@{linkedService().DBName}"
+		},
+		"EEIADF_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://eeistorage1.dfs.core.windows.net/"
+		},
+		"EEISQL_properties_typeProperties_server": {
+			"type": "string",
+			"defaultValue": "Server=tcp:eei-synapse-dev.sql.azuresynapse.net,1433;Initial Catalog=eei_sqlpool;Persist Security Info=False;User ID={your_username};Password={your_password};MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Authentication=\"Active Directory Password\";"
+		},
+		"EEISQL_properties_typeProperties_database": {
+			"type": "string",
+			"defaultValue": "eei_sqlpool"
+		},
+		"EEISQL_properties_typeProperties_userName": {
+			"type": "string",
+			"defaultValue": "undefined"
+		},
+		"eei-synapse-dev-WorkspaceDefaultStorage_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://eeistorage1.dfs.core.windows.net"
+		},
+		"containerUri": {
+			"type": "string",
+			"metadata": "URI to storage account containing linked ARM templates"
+		},
+		"containerSasToken": {
+			"type": "string",
+			"metadata": "Sas token to storage account containing linked ARM templates"
+		}
+	},
+	"variables": {
+		"factoryId": "[concat('Microsoft.DataFactory/factories/', parameters('factoryName'))]"
+	},
+	"resources": [
+		{
+			"name": "eei-adf-dev_ArmTemplate_0",
+			"type": "Microsoft.Resources/deployments",
+			"apiVersion": "2024-03-01",
+			"properties": {
+				"mode": "incremental",
+				"templateLink": {
+					"uri": "[concat(parameters('containerUri'), '/ArmTemplate_0.json', parameters('containerSasToken'))]",
+					"contentVersion": "1.0.0.0"
+				},
+				"parameters": {
+					"factoryName": {
+						"value": "[parameters('factoryName')]"
+					},
+					"EEISQL_password": {
+						"value": "[parameters('EEISQL_password')]"
+					},
+					"eei-synapse-dev-WorkspaceDefaultSqlServer_connectionString": {
+						"value": "[parameters('eei-synapse-dev-WorkspaceDefaultSqlServer_connectionString')]"
+					},
+					"EEIADF_properties_typeProperties_url": {
+						"value": "[parameters('EEIADF_properties_typeProperties_url')]"
+					},
+					"EEISQL_properties_typeProperties_server": {
+						"value": "[parameters('EEISQL_properties_typeProperties_server')]"
+					},
+					"EEISQL_properties_typeProperties_database": {
+						"value": "[parameters('EEISQL_properties_typeProperties_database')]"
+					},
+					"EEISQL_properties_typeProperties_userName": {
+						"value": "[parameters('EEISQL_properties_typeProperties_userName')]"
+					},
+					"eei-synapse-dev-WorkspaceDefaultStorage_properties_typeProperties_url": {
+						"value": "[parameters('eei-synapse-dev-WorkspaceDefaultStorage_properties_typeProperties_url')]"
+					}
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "eei-adf-dev_ArmTemplate_1",
+			"type": "Microsoft.Resources/deployments",
+			"apiVersion": "2024-03-01",
+			"properties": {
+				"mode": "incremental",
+				"templateLink": {
+					"uri": "[concat(parameters('containerUri'), '/ArmTemplate_1.json', parameters('containerSasToken'))]",
+					"contentVersion": "1.0.0.0"
+				},
+				"parameters": {
+					"factoryName": {
+						"value": "[parameters('factoryName')]"
+					}
+				}
+			},
+			"dependsOn": [
+				"[resourceId('Microsoft.Resources/deployments', 'eei-adf-dev_ArmTemplate_0')]"
+			]
+		}
+	]
+}

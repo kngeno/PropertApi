@@ -1,0 +1,1043 @@
+{
+	"$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"type": "string",
+			"metadata": "Data Factory name",
+			"defaultValue": "eei-adf-dev"
+		},
+		"EEISQL_password": {
+			"type": "secureString",
+			"metadata": "Secure string for 'password' of 'EEISQL'"
+		},
+		"eei-synapse-dev-WorkspaceDefaultSqlServer_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'eei-synapse-dev-WorkspaceDefaultSqlServer'",
+			"defaultValue": "Integrated Security=False;Encrypt=True;Connection Timeout=30;Data Source=tcp:eei-synapse-dev.sql.azuresynapse.net,1433;Initial Catalog=@{linkedService().DBName}"
+		},
+		"EEIADF_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://eeistorage1.dfs.core.windows.net/"
+		},
+		"EEISQL_properties_typeProperties_server": {
+			"type": "string",
+			"defaultValue": "Server=tcp:eei-synapse-dev.sql.azuresynapse.net,1433;Initial Catalog=eei_sqlpool;Persist Security Info=False;User ID={your_username};Password={your_password};MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Authentication=\"Active Directory Password\";"
+		},
+		"EEISQL_properties_typeProperties_database": {
+			"type": "string",
+			"defaultValue": "eei_sqlpool"
+		},
+		"EEISQL_properties_typeProperties_userName": {
+			"type": "string",
+			"defaultValue": "undefined"
+		},
+		"eei-synapse-dev-WorkspaceDefaultStorage_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://eeistorage1.dfs.core.windows.net"
+		}
+	},
+	"variables": {
+		"factoryId": "[concat('Microsoft.DataFactory/factories/', parameters('factoryName'))]"
+	},
+	"resources": [
+		{
+			"name": "[concat(parameters('factoryName'), '/EEIADF')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"description": "Data Storage",
+				"annotations": [],
+				"type": "AzureBlobFS",
+				"typeProperties": {
+					"url": "[parameters('EEIADF_properties_typeProperties_url')]"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/EEISQL')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"description": "EEISQL",
+				"annotations": [],
+				"type": "SqlServer",
+				"typeProperties": {
+					"server": "[parameters('EEISQL_properties_typeProperties_server')]",
+					"database": "[parameters('EEISQL_properties_typeProperties_database')]",
+					"encrypt": "True",
+					"trustServerCertificate": false,
+					"authenticationType": "SQL",
+					"userName": "[parameters('EEISQL_properties_typeProperties_userName')]",
+					"password": {
+						"type": "SecureString",
+						"value": "[parameters('EEISQL_password')]"
+					},
+					"multipleActiveResultSets": "False"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/AutoResolveIntegrationRuntime')]",
+			"type": "Microsoft.DataFactory/factories/integrationRuntimes",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"type": "Managed",
+				"typeProperties": {
+					"computeProperties": {
+						"location": "AutoResolve",
+						"dataFlowProperties": {
+							"computeType": "General",
+							"coreCount": 8,
+							"timeToLive": 0
+						}
+					}
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/WorkspaceSystemIdentity')]",
+			"type": "Microsoft.DataFactory/factories/credentials",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"type": "ManagedIdentity",
+				"typeProperties": {}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/BuildingsCSV')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"description": "BuildingsCSV",
+				"linkedServiceName": {
+					"referenceName": "EEIADF",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"fileName": "buildings_ext.csv",
+						"folderPath": "csv",
+						"fileSystem": "raw"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
+				},
+				"schema": [
+					{
+						"name": "building_id",
+						"type": "String"
+					},
+					{
+						"name": "parcel_id",
+						"type": "String"
+					},
+					{
+						"name": "use_type",
+						"type": "String"
+					},
+					{
+						"name": "year_built",
+						"type": "String"
+					},
+					{
+						"name": "floors",
+						"type": "String"
+					},
+					{
+						"name": "height_m",
+						"type": "String"
+					},
+					{
+						"name": "construction_status",
+						"type": "String"
+					},
+					{
+						"name": "permit_number",
+						"type": "String"
+					},
+					{
+						"name": "regulatory_status",
+						"type": "String"
+					},
+					{
+						"name": "valuation_amount",
+						"type": "String"
+					},
+					{
+						"name": "owner_name",
+						"type": "String"
+					}
+				]
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/EEIADF')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/BuildingsPq')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "EEIADF",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "Parquet",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"folderPath": "buildings",
+						"fileSystem": "clean"
+					},
+					"compressionCodec": "snappy"
+				},
+				"schema": [
+					{
+						"name": "building_id",
+						"type": "UTF8"
+					},
+					{
+						"name": "parcel_id",
+						"type": "UTF8"
+					},
+					{
+						"name": "use_type",
+						"type": "UTF8"
+					},
+					{
+						"name": "year_built",
+						"type": "DOUBLE"
+					},
+					{
+						"name": "floors",
+						"type": "DOUBLE"
+					},
+					{
+						"name": "height_m",
+						"type": "DOUBLE"
+					},
+					{
+						"name": "construction_status",
+						"type": "UTF8"
+					},
+					{
+						"name": "permit_number",
+						"type": "UTF8"
+					},
+					{
+						"name": "regulatory_status",
+						"type": "UTF8"
+					},
+					{
+						"name": "valuation_amount",
+						"type": "DOUBLE"
+					},
+					{
+						"name": "owner_name",
+						"type": "UTF8"
+					}
+				]
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/EEIADF')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/CompaniesPq')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "EEIADF",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "Parquet",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"folderPath": "companies",
+						"fileSystem": "clean"
+					},
+					"compressionCodec": "snappy"
+				},
+				"schema": [
+					{
+						"name": "company_id",
+						"type": "UTF8"
+					},
+					{
+						"name": "company_name",
+						"type": "UTF8"
+					},
+					{
+						"name": "registration_number",
+						"type": "UTF8"
+					},
+					{
+						"name": "industry",
+						"type": "UTF8"
+					},
+					{
+						"name": "address",
+						"type": "UTF8"
+					},
+					{
+						"name": "board_members",
+						"type": "UTF8"
+					},
+					{
+						"name": "ownership_share",
+						"type": "UTF8"
+					},
+					{
+						"name": "status",
+						"type": "UTF8"
+					},
+					{
+						"name": "last_updated",
+						"type": "DATE"
+					}
+				]
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/EEIADF')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/CompaniesXLSX')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"description": "CompaniesXLSX",
+				"linkedServiceName": {
+					"referenceName": "EEIADF",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "Excel",
+				"typeProperties": {
+					"sheetName": "Companies",
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"fileName": "companies.xlsx",
+						"folderPath": "xlsx",
+						"fileSystem": "raw"
+					},
+					"firstRowAsHeader": true
+				},
+				"schema": [
+					{
+						"name": "Prop_0",
+						"type": "String"
+					},
+					{
+						"name": "Prop_1",
+						"type": "String"
+					},
+					{
+						"name": "Prop_2",
+						"type": "String"
+					},
+					{
+						"name": "Prop_3",
+						"type": "String"
+					},
+					{
+						"name": "Prop_4",
+						"type": "String"
+					},
+					{
+						"name": "Prop_5",
+						"type": "String"
+					},
+					{
+						"name": "Prop_6",
+						"type": "String"
+					},
+					{
+						"name": "Prop_7",
+						"type": "String"
+					},
+					{
+						"name": "Prop_8",
+						"type": "String"
+					}
+				]
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/EEIADF')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ParcelsJSON')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "EEIADF",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "Json",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"fileName": "parcels_ext.json",
+						"folderPath": "json",
+						"fileSystem": "raw"
+					}
+				},
+				"schema": {
+					"type": "object",
+					"properties": {
+						"parcel_id": {
+							"type": "string"
+						},
+						"owner_id": {
+							"type": "string"
+						},
+						"owner_name": {
+							"type": "string"
+						},
+						"area_name": {
+							"type": "string"
+						},
+						"zoning_code": {
+							"type": "string"
+						},
+						"cadastral_code": {
+							"type": "string"
+						},
+						"intended_use": {
+							"type": "string"
+						},
+						"regulatory_status": {
+							"type": "string"
+						},
+						"land_use": {
+							"type": "string"
+						},
+						"area_sq_m": {
+							"type": "number"
+						},
+						"centroid_lon": {
+							"type": "number"
+						},
+						"centroid_lat": {
+							"type": "number"
+						},
+						"last_transaction_date": {
+							"type": "string"
+						}
+					}
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/EEIADF')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ParcelsPq')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "EEIADF",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "Parquet",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"folderPath": "parcels",
+						"fileSystem": "clean"
+					},
+					"compressionCodec": "snappy"
+				},
+				"schema": [
+					{
+						"name": "parcel_id",
+						"type": "UTF8"
+					},
+					{
+						"name": "owner_id",
+						"type": "UTF8"
+					},
+					{
+						"name": "owner_name",
+						"type": "UTF8"
+					},
+					{
+						"name": "area_name",
+						"type": "UTF8"
+					},
+					{
+						"name": "zoning_code",
+						"type": "UTF8"
+					},
+					{
+						"name": "cadastral_code",
+						"type": "UTF8"
+					},
+					{
+						"name": "intended_use",
+						"type": "UTF8"
+					},
+					{
+						"name": "regulatory_status",
+						"type": "UTF8"
+					},
+					{
+						"name": "land_use",
+						"type": "UTF8"
+					},
+					{
+						"name": "area_sq_m",
+						"type": "DOUBLE"
+					},
+					{
+						"name": "centroid_lon",
+						"type": "DOUBLE"
+					},
+					{
+						"name": "centroid_lat",
+						"type": "DOUBLE"
+					},
+					{
+						"name": "last_transaction_date",
+						"type": "DATE"
+					}
+				]
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/EEIADF')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/PeoplePq')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "EEIADF",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "Parquet",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"folderPath": "people",
+						"fileSystem": "clean"
+					},
+					"compressionCodec": "snappy"
+				},
+				"schema": [
+					{
+						"name": "person_id",
+						"type": "UTF8"
+					},
+					{
+						"name": "full_name",
+						"type": "UTF8"
+					},
+					{
+						"name": "national_id",
+						"type": "UTF8"
+					},
+					{
+						"name": "dob",
+						"type": "DATE"
+					},
+					{
+						"name": "role",
+						"type": "UTF8"
+					},
+					{
+						"name": "associated_company",
+						"type": "UTF8"
+					},
+					{
+						"name": "associated_parcels",
+						"type": "UTF8"
+					},
+					{
+						"name": "contact_email",
+						"type": "UTF8"
+					},
+					{
+						"name": "watchlist_status",
+						"type": "UTF8"
+					}
+				]
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/EEIADF')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/PeopleXML')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"description": "PeopleXML",
+				"linkedServiceName": {
+					"referenceName": "EEIADF",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "Xml",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"fileName": "people.xml",
+						"folderPath": "xml",
+						"fileSystem": "raw"
+					}
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/EEIADF')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ZoningBinary')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"description": "ZoningBinary",
+				"linkedServiceName": {
+					"referenceName": "EEIADF",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "Binary",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"fileName": "zoning_ext.sql",
+						"folderPath": "sql",
+						"fileSystem": "raw"
+					}
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/EEIADF')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ds_clean_buildings_parquet')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "EEIADF",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "clean"
+				},
+				"annotations": [],
+				"type": "Parquet",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"fileName": "ds_clean_buildings_parquet.parquet",
+						"folderPath": "buildings",
+						"fileSystem": "clean"
+					},
+					"compressionCodec": "snappy"
+				},
+				"schema": [
+					{
+						"name": "building_id",
+						"type": "UTF8"
+					},
+					{
+						"name": "parcel_id",
+						"type": "UTF8"
+					},
+					{
+						"name": "use_type",
+						"type": "UTF8"
+					},
+					{
+						"name": "year_built",
+						"type": "DOUBLE"
+					},
+					{
+						"name": "floors",
+						"type": "DOUBLE"
+					},
+					{
+						"name": "height_m",
+						"type": "DOUBLE"
+					},
+					{
+						"name": "construction_status",
+						"type": "UTF8"
+					},
+					{
+						"name": "permit_number",
+						"type": "UTF8"
+					},
+					{
+						"name": "regulatory_status",
+						"type": "UTF8"
+					},
+					{
+						"name": "valuation_amount",
+						"type": "DOUBLE"
+					},
+					{
+						"name": "owner_name",
+						"type": "UTF8"
+					}
+				]
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/EEIADF')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ds_clean_companies_parquet')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "EEIADF",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "clean"
+				},
+				"annotations": [],
+				"type": "Parquet",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"fileName": "ds_clean_companies_parquet.parquet",
+						"folderPath": "companies",
+						"fileSystem": "clean"
+					},
+					"compressionCodec": "snappy"
+				},
+				"schema": [
+					{
+						"name": "company_id",
+						"type": "UTF8"
+					},
+					{
+						"name": "company_name",
+						"type": "UTF8"
+					},
+					{
+						"name": "registration_number",
+						"type": "UTF8"
+					},
+					{
+						"name": "industry",
+						"type": "UTF8"
+					},
+					{
+						"name": "address",
+						"type": "UTF8"
+					},
+					{
+						"name": "board_members",
+						"type": "UTF8"
+					},
+					{
+						"name": "ownership_share",
+						"type": "UTF8"
+					},
+					{
+						"name": "status",
+						"type": "UTF8"
+					},
+					{
+						"name": "last_updated",
+						"type": "DATE"
+					}
+				]
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/EEIADF')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ds_clean_parcels_parquet')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "EEIADF",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "clean"
+				},
+				"annotations": [],
+				"type": "Parquet",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"fileName": "ds_clean_parcels_parquet.parquet",
+						"folderPath": "parcels",
+						"fileSystem": "clean"
+					},
+					"compressionCodec": "snappy"
+				},
+				"schema": [
+					{
+						"name": "parcel_id",
+						"type": "UTF8"
+					},
+					{
+						"name": "owner_id",
+						"type": "UTF8"
+					},
+					{
+						"name": "owner_name",
+						"type": "UTF8"
+					},
+					{
+						"name": "area_name",
+						"type": "UTF8"
+					},
+					{
+						"name": "zoning_code",
+						"type": "UTF8"
+					},
+					{
+						"name": "cadastral_code",
+						"type": "UTF8"
+					},
+					{
+						"name": "intended_use",
+						"type": "UTF8"
+					},
+					{
+						"name": "regulatory_status",
+						"type": "UTF8"
+					},
+					{
+						"name": "land_use",
+						"type": "UTF8"
+					},
+					{
+						"name": "area_sq_m",
+						"type": "DOUBLE"
+					},
+					{
+						"name": "centroid_lon",
+						"type": "DOUBLE"
+					},
+					{
+						"name": "centroid_lat",
+						"type": "DOUBLE"
+					},
+					{
+						"name": "last_transaction_date",
+						"type": "DATE"
+					}
+				]
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/EEIADF')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ds_clean_people_parquet')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "EEIADF",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "clean"
+				},
+				"annotations": [],
+				"type": "Parquet",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"fileName": "ds_clean_people_parquet.parquet",
+						"folderPath": "people",
+						"fileSystem": "clean"
+					},
+					"compressionCodec": "snappy"
+				},
+				"schema": [
+					{
+						"name": "person_id",
+						"type": "UTF8"
+					},
+					{
+						"name": "full_name",
+						"type": "UTF8"
+					},
+					{
+						"name": "national_id",
+						"type": "UTF8"
+					},
+					{
+						"name": "dob",
+						"type": "DATE"
+					},
+					{
+						"name": "role",
+						"type": "UTF8"
+					},
+					{
+						"name": "associated_company",
+						"type": "UTF8"
+					},
+					{
+						"name": "associated_parcels",
+						"type": "UTF8"
+					},
+					{
+						"name": "contact_email",
+						"type": "UTF8"
+					},
+					{
+						"name": "watchlist_status",
+						"type": "UTF8"
+					}
+				]
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/EEIADF')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ds_clean_zoning_parquet')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "EEIADF",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "clean"
+				},
+				"annotations": [],
+				"type": "Parquet",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"fileName": "ds_clean_zoning_parquet.parquet",
+						"folderPath": "zones",
+						"fileSystem": "clean"
+					},
+					"compressionCodec": "snappy"
+				},
+				"schema": [
+					{
+						"name": "zone_id",
+						"type": "UTF8"
+					},
+					{
+						"name": "zoning_code",
+						"type": "UTF8"
+					},
+					{
+						"name": "regulatory_body",
+						"type": "UTF8"
+					},
+					{
+						"name": "approval_status",
+						"type": "UTF8"
+					},
+					{
+						"name": "valid_until",
+						"type": "DATE"
+					},
+					{
+						"name": "restrictions",
+						"type": "UTF8"
+					},
+					{
+						"name": "description",
+						"type": "UTF8"
+					},
+					{
+						"name": "max_height_m",
+						"type": "DOUBLE"
+					},
+					{
+						"name": "far",
+						"type": "DOUBLE"
+					},
+					{
+						"name": "allowed_uses",
+						"type": "UTF8"
+					}
+				]
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/EEIADF')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/eei-synapse-dev-WorkspaceDefaultSqlServer')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"parameters": {
+					"DBName": {
+						"type": "String"
+					}
+				},
+				"annotations": [],
+				"type": "AzureSqlDW",
+				"typeProperties": {
+					"connectionString": "[parameters('eei-synapse-dev-WorkspaceDefaultSqlServer_connectionString')]"
+				},
+				"connectVia": {
+					"referenceName": "AutoResolveIntegrationRuntime",
+					"type": "IntegrationRuntimeReference"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/integrationRuntimes/AutoResolveIntegrationRuntime')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/eei-synapse-dev-WorkspaceDefaultStorage')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureBlobFS",
+				"typeProperties": {
+					"url": "[parameters('eei-synapse-dev-WorkspaceDefaultStorage_properties_typeProperties_url')]"
+				},
+				"connectVia": {
+					"referenceName": "AutoResolveIntegrationRuntime",
+					"type": "IntegrationRuntimeReference"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/integrationRuntimes/AutoResolveIntegrationRuntime')]"
+			]
+		}
+	]
+}

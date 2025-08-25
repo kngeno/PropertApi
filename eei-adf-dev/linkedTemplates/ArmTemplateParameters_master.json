@@ -1,0 +1,36 @@
+{
+	"$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"value": "eei-adf-dev"
+		},
+		"EEISQL_password": {
+			"value": ""
+		},
+		"eei-synapse-dev-WorkspaceDefaultSqlServer_connectionString": {
+			"value": "Integrated Security=False;Encrypt=True;Connection Timeout=30;Data Source=tcp:eei-synapse-dev.sql.azuresynapse.net,1433;Initial Catalog=@{linkedService().DBName}"
+		},
+		"EEIADF_properties_typeProperties_url": {
+			"value": "https://eeistorage1.dfs.core.windows.net/"
+		},
+		"EEISQL_properties_typeProperties_server": {
+			"value": "Server=tcp:eei-synapse-dev.sql.azuresynapse.net,1433;Initial Catalog=eei_sqlpool;Persist Security Info=False;User ID={your_username};Password={your_password};MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Authentication=\"Active Directory Password\";"
+		},
+		"EEISQL_properties_typeProperties_database": {
+			"value": "eei_sqlpool"
+		},
+		"EEISQL_properties_typeProperties_userName": {
+			"value": "undefined"
+		},
+		"eei-synapse-dev-WorkspaceDefaultStorage_properties_typeProperties_url": {
+			"value": "https://eeistorage1.dfs.core.windows.net"
+		},
+		"containerUri": {
+			"value": ""
+		},
+		"containerSasToken": {
+			"value": ""
+		}
+	}
+}
